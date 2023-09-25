@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Установка XRay-сервера</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: #E6E6E6;
+     overflow: visible;
+    }
+    .nginx {
+     background-color: #D8F6CE;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<section id="установка-xray-на-сервер-ubuntu-или-debian" class="level2">
+<h2>Установка XRay на сервер Ubuntu или Debian</h2>
+<section id="подготовка" class="level3">
+<h3>1. Подготовка</h3>
+<p>Нам понадобится домен, E-mail, UUID и пароль. Подготовим их, согласно инструкции ниже, и запишем в какой-нибудь файл, чтобы были под рукой. Не стоит делиться этими данными (кроме, возможно, E-mail) с третьми лицами, так как, например, пары домен и UUID уже достаточно, чтобы использовать для подключения по протоколу VLESS.</p>
+<section id="домен" class="level4">
+<h4>1.1 Домен</h4>
+<p>Можно купить платный и привязать его к IP-адресу сервера, то есть создать в регистраторе домена запись типа A с IP-адресом сервера и названием домена. Можно создать бесплатный домен 2-го уровня сроком на 1 год на сервисе <a href="freenom.com">Freenom</a> и тоже привязать его к IP-адресу сервера. Но самый простой вариант - создать бесплатный домен 3-го уровня на сервисе <a href="https://freemyip.com/website">freemyip.com</a>. Для этого вводим название домена и если он доступен, сайт выдаст ссылку следующего вида: https://freemyip.com/update?token=токен&amp;domain=название-домена Для привязки созданного домена к IP нашего сервера, на сервере выполняем команду:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> выданная_ссылка</span></code></pre></div>
+</section>
+<section id="e-mail" class="level4">
+<h4>1.2 E-mail</h4>
+<p>E-mail понадобится для получения SSL-сертификата, также он будет прописан в конфиге XRay. Не уверен, что E-Mail должен быть действующим, так как никаких проверок по почте не происходит.</p>
+</section>
+<section id="uuid" class="level4">
+<h4>1.3 UUID</h4>
+<p>Уникальный идентификатор пользователя (uuid) будет прописан в конфиге и нужен для подключения по VLESS. Чтобы сгенерировать uuid, можно установить программу uuid:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install uuid</span></code></pre></div>
+<p>И далее вызвать:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uuid</span></span></code></pre></div>
+<p>Можно выполнить данный шаг на своём компьютере под ОС LInux или на сервере. А также можно воспользоваться специальным сервисом, например <a href="https://www.uuidgenerator.net/version4">https://www.uuidgenerator.net/version4</a></p>
+</section>
+<section id="пароль" class="level4">
+<h4>1.4 Пароль</h4>
+<p>Для шифрования соединения по протоколу ShadowSocks, лучше всего использовать современные методы: <strong>2022-blake3-aes-128-gcm</strong> или <strong>2022-blake3-aes-256-gcm</strong> Для этого нужно сгенерировать соответствующий пароль. Если мы собираемся на своём компьютере пользоваться консольным клиентом <strong>shadowsocks-rust</strong>, можно установить его и с его помощью можно сгенировать пароль. Если у нас на домашнем компьютере не Linux, можно установить shadowsocks-rust на сервере.</p>
+<p>Сначала устанавливаем rust:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install build-essential <span class="at">-y</span> <span class="kw">&amp;&amp;</span> <span class="ex">curl</span> <span class="at">--proto</span> <span class="st">&#39;=https&#39;</span> <span class="at">--tlsv1.2</span> <span class="at">-sSf</span> https://sh.rustup.rs <span class="kw">|</span> <span class="fu">sh</span></span></code></pre></div>
+<p>Скрипт предложит выбрать, что мы хотим сделать, выбираем вариант 1 - proceed installation (произвести установку).</p>
+<p>Вместе с rust установится и менеджер пакетов cargo.</p>
+<p>Чтобы cargo был доступен, выполняем команду:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> <span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/.cargo/env&quot;</span></span></code></pre></div>
+<p>либо перелогиниваемся по ssh: выходим и подключаемся заново.</p>
+<p>Затем с помощью cargo устанавливаем shadowsocks-rust:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cargo</span> install shadowsocks-rust</span></code></pre></div>
+<p>И генерируем пароль:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ssservice</span> genkey <span class="at">-m</span> <span class="st">&quot;2022-blake3-aes-128-gcm&quot;</span></span></code></pre></div>
+<p>или</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ssservice</span> genkey <span class="at">-m</span> <span class="st">&quot;2022-blake3-aes-256-gcm&quot;</span></span></code></pre></div>
+<p>Либо же можно поискать сервисы для генерации в интернете.</p>
+</section>
+</section>
+<section id="получение-ssl-сертификата-для-домена" class="level3">
+<h3>2. Получение SSL-сертификата для домена</h3>
+<p>Получим бесплатный SSL-сертификат от LetsEncrypt. Установим certbot:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install certbot</span></code></pre></div>
+<p>И запросим SSL-сертификат</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">certbot</span> certonly <span class="at">--standalone</span> <span class="at">--preferred-challenges</span> http <span class="at">-d</span> название_домена</span></code></pre></div>
+<p>Certbot спросит ваш E-mail на всякий случай, спросит, согласны ли вы с правилами, запросит сертификат от LetsEncrypt, положит его в папочку /etc/letsencrypt и создаст правило, чтобы он обновлялся каждые 3 месяца. При каждом обновлении сертификата нужно перезапускать XRay-сервер, давайте попросим certbot делать это автоматически:</p>
+<p>Открываем файл:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> vim /etc/letsencrypt/renewal/название_домена.conf</span></code></pre></div>
+<p>В конец добавляем строку:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">renew_hook</span> = systemctl reload xray</span></code></pre></div>
+</section>
+<section id="установка-nginx" class="level3">
+<h3>3. Установка nginx</h3>
+<p>Порт 8080 у нас будет использоваться для VLESS fallback (можно использовать и другой порт). На нем у нас должен слушать веб-сервер с сайтом для маскировки. Самый просто вариант это сделать - поставить позади него nginx:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install nginx</span></code></pre></div>
+<p>Откроем файл /etc/nginx/sites-enabled/default:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> vim /etc/nginx/sites-enabled/default</span></code></pre></div>
+<p>Есть 3 варианта содержимого:</p>
+<section id="й-вариант" class="level5">
+<h5>1-й вариант</h5>
+<p>поставить стандартную заглушку nginx:</p>
+<pre class="nginx"><code>server {
+        listen 127.0.0.1:8080 default_server;
+        listen [::1]:8080 default_server;
+
+        root /var/www/html;
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+}</code></pre>
+<p>Также это может быть реальный сайт с html-страницами, например, с котиками. Или сайт на php, но тогда конфигурация будет более сложной, и это уже не тема данной инструкции.</p>
+</section>
+<section id="й-вариант-1" class="level5">
+<h5>2-й вариант</h5>
+<p>веб-сервер спрашивает у подключающихся логин и пароль, и отклоняет все введенные варианты:</p>
+<pre class="nginx"><code>server {
+        listen 127.0.0.1:8080 default_server;
+        listen [::1]:8080 default_server;
+        server_name _;
+
+        location / {
+            auth_basic &quot;Administrator’s Area&quot;;
+            auth_basic_user_file /etc/htpasswd;
+        }
+}</code></pre>
+<p>Сам файл /etc/htpasswd может вообще даже не существовать: нам не нужно проверять правильность пароля, мы будем отклонять все подряд, делая вид, что пароль не подошел. Nginx все равно запустится даже без этого файла.</p>
+</section>
+<section id="й-вариант-2" class="level5">
+<h5>3-й вариант</h5>
+<p>переадресовывать подключения на какой-нибудь другой сайт</p>
+<pre class="nginx"><code>server {
+        listen 127.0.0.1:8080 default_server;
+        listen [::1]:8080 default_server;
+
+        server_name _;
+
+        location / {
+             proxy_pass http://lib.ru;
+        }
+}</code></pre>
+<p>В результате при попытке открытия адреса прокси браузером загрузится зеркало lib.ru - заменитм его на какой-нибудь другой сайт. Использовать для этого какие-либо популярные или навороченный сайты явно не стоит, а вот какую-нибудь богом забытую хомпагу эпохи Web 1.0 или безымянную webftp-файлосвалку - уже можно. А чтобы некоторые тупые боты или пауки поисковых систем не нагнали нам трафика, можно добавить <a href="https://www.nginx.com/blog/rate-limiting-nginx/">опции ratelimit-модуля в Nginx</a> и ограничить скорость передачи данных с “переадресованного” сайта, например, до 1 мегабита. Также можно проксировать на ваш сайт на Python или NodeJS, но тогда конфигурация будет более сложной, и это уже не тема данной инструкции.</p>
+<p>После внесения изменений, протестируем, что конфигурация nginx синтаксически верная:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> nginx <span class="at">-t</span></span></code></pre></div>
+<p>И, если это так, перезапустим nginx:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl restart nginx</span></code></pre></div>
+</section>
+</section>
+<section id="установка-xray" class="level3">
+<h3>4. Установка XRay</h3>
+<p>Самый простой вариант - установить XRay с помощью готового скрипта:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> bash <span class="at">-c</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">-L</span> https://github.com/XTLS/Xray-install/raw/main/install-release.sh<span class="va">)</span><span class="st">&quot;</span> @ install</span></code></pre></div>
+</section>
+<section id="настройка-конфигурации-и-запуск" class="level3">
+<h3>5. Настройка конфигурации и запуск</h3>
+<p>Если мы устанавливали XRay с помощью скрипта, у нас будет следующий файл конфигурации: /usr/local/etc/xray/config.json, откроем его:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> vim /usr/local/etc/xray/config.json</span></code></pre></div>
+<p>Удалим содержимое и вставим своё:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;routing&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;rules&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;domainStrategy&quot;</span><span class="fu">:</span> <span class="st">&quot;AsIs&quot;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;inbounds&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;port&quot;</span><span class="fu">:</span> <span class="dv">2023</span><span class="fu">,</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;tag&quot;</span><span class="fu">:</span> <span class="st">&quot;ss&quot;</span><span class="fu">,</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;protocol&quot;</span><span class="fu">:</span> <span class="st">&quot;shadowsocks&quot;</span><span class="fu">,</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;settings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;method&quot;</span><span class="fu">:</span> <span class="st">&quot;2022-blake3-aes-128-gcm&quot;</span><span class="fu">,</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;password&quot;</span><span class="fu">:</span> <span class="st">&quot;наш_пароль&quot;</span><span class="fu">,</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;network&quot;</span><span class="fu">:</span> <span class="st">&quot;tcp,udp&quot;</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;port&quot;</span><span class="fu">:</span> <span class="dv">443</span><span class="fu">,</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;protocol&quot;</span><span class="fu">:</span> <span class="st">&quot;vless&quot;</span><span class="fu">,</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;tag&quot;</span><span class="fu">:</span> <span class="st">&quot;vless_tls&quot;</span><span class="fu">,</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;settings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;clients&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;наш_uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;наш_E-mail&quot;</span><span class="fu">,</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;flow&quot;</span><span class="fu">:</span> <span class="st">&quot;xtls-rprx-vision&quot;</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;decryption&quot;</span><span class="fu">:</span> <span class="st">&quot;none&quot;</span><span class="fu">,</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;fallbacks&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;path&quot;</span><span class="fu">:</span> <span class="st">&quot;/myverysecretpath&quot;</span><span class="fu">,</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;dest&quot;</span><span class="fu">:</span> <span class="st">&quot;@vless-ws&quot;</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;dest&quot;</span><span class="fu">:</span> <span class="st">&quot;8080&quot;</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;streamSettings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;network&quot;</span><span class="fu">:</span> <span class="st">&quot;tcp&quot;</span><span class="fu">,</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;security&quot;</span><span class="fu">:</span> <span class="st">&quot;tls&quot;</span><span class="fu">,</span></span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;tlsSettings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;alpn&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;http/1.1&quot;</span><span class="ot">,</span> <span class="st">&quot;h2&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;certificates&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>            <span class="fu">{</span></span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;certificateFile&quot;</span><span class="fu">:</span> <span class="st">&quot;/etc/letsencrypt/live/наш_домен/fullchain.pem&quot;</span><span class="fu">,</span></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;keyFile&quot;</span><span class="fu">:</span> <span class="st">&quot;/etc/letsencrypt/live/наш_домен/privkey.pem&quot;</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a>          <span class="ot">]</span></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sniffing&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;enabled&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;destOverride&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;http&quot;</span><span class="ot">,</span> <span class="st">&quot;tls&quot;</span><span class="ot">]</span></span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;listen&quot;</span><span class="fu">:</span> <span class="st">&quot;@vless-ws&quot;</span><span class="fu">,</span></span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;protocol&quot;</span><span class="fu">:</span> <span class="st">&quot;vless&quot;</span><span class="fu">,</span></span>
+<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;tag&quot;</span><span class="fu">:</span> <span class="st">&quot;vless_ws&quot;</span><span class="fu">,</span></span>
+<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;settings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;clients&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;наш_uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;наш_E-mail&quot;</span></span>
+<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;decryption&quot;</span><span class="fu">:</span> <span class="st">&quot;none&quot;</span></span>
+<span id="cb22-70"><a href="#cb22-70" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;streamSettings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-72"><a href="#cb22-72" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;network&quot;</span><span class="fu">:</span> <span class="st">&quot;ws&quot;</span><span class="fu">,</span></span>
+<span id="cb22-73"><a href="#cb22-73" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;security&quot;</span><span class="fu">:</span> <span class="st">&quot;none&quot;</span><span class="fu">,</span></span>
+<span id="cb22-74"><a href="#cb22-74" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;wsSettings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-75"><a href="#cb22-75" aria-hidden="true" tabindex="-1"></a>          <span class="dt">&quot;path&quot;</span><span class="fu">:</span> <span class="st">&quot;/myverysecretpath&quot;</span></span>
+<span id="cb22-76"><a href="#cb22-76" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb22-77"><a href="#cb22-77" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb22-78"><a href="#cb22-78" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb22-79"><a href="#cb22-79" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb22-80"><a href="#cb22-80" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;outbounds&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb22-81"><a href="#cb22-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb22-82"><a href="#cb22-82" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;protocol&quot;</span><span class="fu">:</span> <span class="st">&quot;freedom&quot;</span><span class="fu">,</span></span>
+<span id="cb22-83"><a href="#cb22-83" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;tag&quot;</span><span class="fu">:</span> <span class="st">&quot;direct&quot;</span></span>
+<span id="cb22-84"><a href="#cb22-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb22-85"><a href="#cb22-85" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb22-86"><a href="#cb22-86" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;protocol&quot;</span><span class="fu">:</span> <span class="st">&quot;blackhole&quot;</span><span class="fu">,</span></span>
+<span id="cb22-87"><a href="#cb22-87" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;tag&quot;</span><span class="fu">:</span> <span class="st">&quot;block&quot;</span></span>
+<span id="cb22-88"><a href="#cb22-88" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb22-89"><a href="#cb22-89" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb22-90"><a href="#cb22-90" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>Заменим везде наш_домен, наш_E-mail, наш_uuid и наш_пароль соответствующими данными, записанными на 1-м шаге. Также, если мы используем метод шифрования 2022-blake3-aes-256-gcm, а не 2022-blake3-aes-128-gcm, заменим соответствующее значение в поле “method”.</p>
+<p>Откроем файл службы XRay:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> vim /etc/systemd/system/xray.service</span></code></pre></div>
+<p>Заменим имя пользователя по умолчанию - при установке с помощью скрипта это будет nobody - на наше имя пользователя. Это может быть root, если мы не создавали отдельного пользователя. Но, если мы делали “по-правильному” и создали отдельного пользователя, то пишем его. Узнать своё имя пользователя можно с помощью команды:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">whoami</span></span></code></pre></div>
+<p>После внесения всех изменений, выполняем:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl daemon-reload</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> systemctl restart xray</span></code></pre></div>
+<p>Проверить, что XRay успешно запустился, можно командой:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> journalctl <span class="at">-u</span> xray</span></code></pre></div>
+<p>Если есть ошибки, они будут показаны. Например, XRay может ругнуться что не удается распарсить JSON-файл, обычно это связано с лишними запятыми в конце {} блока, в этом случае он укажет, на какой строке ошибка. Исправляем ошибки, перезапускаем еще раз, и переходим к настройке клиента.</p>
+</section>
+</section>
+</body>
+</html>

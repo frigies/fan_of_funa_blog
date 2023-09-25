@@ -1,2 +1,2 @@
-# FanatLuna_Blog
+# Instructions
 Различные заметки и инструкции от кота Фаната
