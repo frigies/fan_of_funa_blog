@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>xray_client_setup</title>
+  <link rel="stylesheet" href="./css/xray_client_setup.css">
+  <script>
+    window.onload = function() {
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            link.setAttribute('target', '_blank');
+        });
+    };
+</script>
+</head>
+<body>
+<section id="установка-и-настройка-xray-на-клиенте" class="level2">
+<h2>Установка и настройка XRay на клиенте</h2>
+<section id="устанавливаем-nekoray" class="level3">
+<h3>1. Устанавливаем nekoray</h3>
+<p>Скачиваем nekoray с <a href="https://github.com/MatsuriDayo/nekoray/releases">сайта</a> На системах, основанных на Debian, скачиваем deb-пакет и устанавливаем.</p>
+<p>На системах, основанных на Arch Linux, проще всего добавить репозиторий chaotic-aur и установить Nekoray оттуда. Также нужно будет установить библиотеки sing-geosite и sing-geoip:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-S</span> nekoray sing-geosite sing-geoip</span></code></pre></div>
+<p>Однако в дистрибутиве Manjaro Nekoray, установленный таким способом, возможно, не запустится из-за проблем с зависимостями. При этом, например, в дистрибутиве EndeavourOS Nekoray, установленный из chaotic-aur, успешно запускается и работает.</p>
+<p>Если Nekoray, установленный таким способом, не работает либо у нас другой дистрибутив Linux, можно просто скачать архив для Linux с <a href="https://github.com/MatsuriDayo/nekoray/releases">этого же сайта</a> и запустить. Там же есть архив и для Windows.</p>
+<p>Версию AppImage не стоит скачивать, если мы хотим использовать VPN для всей системы: она не поддерживает режим TUN.</p>
+</section>
+<section id="настраиваем-подключения" class="level3">
+<h3>2. Настраиваем подключения</h3>
+<p>Идем в Сервер-&gt;Новый профиль, и далее заполняем поля следующим образом.</p>
+<section id="для-shadowsocks" class="level4">
+<h4>2.1 Для ShadowSocks</h4>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Поле</th>
+<th style="text-align: center;">Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Тип</td>
+<td style="text-align: center;">ShadowSocks</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Имя</td>
+<td style="text-align: center;">Название профиля</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Адрес</td>
+<td style="text-align: center;">наш_домен</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Порт</td>
+<td style="text-align: center;">порт ShadowSocks</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Шифрование</td>
+<td style="text-align: center;">2022-blake3-aes-128-gcm или 2022-blake3-aes-256-gcm</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Пароль</td>
+<td style="text-align: center;">наш_пароль</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="для-прямого-vless-xtls-vision" class="level4">
+<h4>2.2 Для прямого VLESS + XTLS-Vision</h4>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Поле</th>
+<th style="text-align: center;">Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Тип</td>
+<td style="text-align: center;">VLESS</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Имя</td>
+<td style="text-align: center;">Название профиля</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Адрес</td>
+<td style="text-align: center;">наш_домен</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Порт</td>
+<td style="text-align: center;">443</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">UUID</td>
+<td style="text-align: center;">наш_uuid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Flow</td>
+<td style="text-align: center;">xtls-rprx-vision</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Транспорт</td>
+<td style="text-align: center;">tcp</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Безопасность</td>
+<td style="text-align: center;">tls</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Кодирование пакетов</td>
+<td style="text-align: center;">xudp</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Fingerprint</td>
+<td style="text-align: center;">chrome</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="для-vless-over-websockets" class="level4">
+<h4>2.3 Для VLESS-over-Websockets</h4>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Поле</th>
+<th style="text-align: center;">Значение</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Тип</td>
+<td style="text-align: center;">VLESS</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Имя</td>
+<td style="text-align: center;">Название профиля</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Адрес</td>
+<td style="text-align: center;">наш_домен</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Порт</td>
+<td style="text-align: center;">443</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">UUID</td>
+<td style="text-align: center;">наш_uuid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Транспорт</td>
+<td style="text-align: center;">ws</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Безопасность</td>
+<td style="text-align: center;">tls</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Кодирование пакетов</td>
+<td style="text-align: center;">xudp</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Path</td>
+<td style="text-align: center;">/myverysecretpath</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Fingerprint</td>
+<td style="text-align: center;">chrome</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="дополнительные-настройки" class="level3">
+<h3>3. Дополнительные настройки</h3>
+<p>Можно выбрать порт для входящих подключений - тот порт, на котором у нас будет висеть XRay на клиенте, по умолчанию 2080.</p>
+</section>
+<section id="тест-и-запуск" class="level3">
+<h3>4. Тест и запуск</h3>
+<p>Выбираем нужное подключение в списке на главном окне, кликаем правой кнопкой мыши -&gt; Текущий выбор -&gt; URL test, и видим в логе и в окошке, что пинг успешен.</p>
+<p>Если это так, то можем запустить выбранный профиль, кликнув правой кнопкой мыши -&gt; Запустить. Или просто нажав клавишу Enter.</p>
+</section>
+</section>
+</body>
+</html>
